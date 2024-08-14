@@ -5,7 +5,7 @@ import { UserService } from './user.service';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface AuthenticatedRequest extends Request {
-  user?: any; // Bạn có thể thay 'any' bằng kiểu User nếu bạn có định nghĩa kiểu đó
+  user?: any;
 }
 @Controller('user')
 export class UserController {
