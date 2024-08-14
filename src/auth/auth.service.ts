@@ -48,7 +48,12 @@ export class AuthService {
         HttpStatus.UNAUTHORIZED,
       );
     }
-    const payload = { id: user.id, name: user.name, email: user.email };
+    const payload = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      type: user.type,
+    };
     const accesstoken = await this.jwtservice.signAsync(payload, {
       secret: process.env.Access_Token_Key,
       expiresIn: '1h',
