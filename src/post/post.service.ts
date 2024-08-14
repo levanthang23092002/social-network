@@ -32,6 +32,7 @@ export class PostService {
           ownerId: iduser,
           nameImage: image.nameImage,
           pathImage: image.pathImage,
+          statuspostid: data.statuspost,
         },
       });
       if (!post) {

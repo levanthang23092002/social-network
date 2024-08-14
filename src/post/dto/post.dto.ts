@@ -5,4 +5,6 @@ export class PostDto {
   @IsNotEmpty()
   summary: string;
   content: string;
+  @IsNotEmpty()
+  statuspost: number;
 }
