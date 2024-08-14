@@ -20,6 +20,7 @@ model User {
   name      String?
   phone     String?
   status    Int       @default(1)
+  type      String    @default("USER")
   posts     Post[]
   createdAt DateTime  @default(now())
   updatedAt DateTime? @updatedAt
@@ -30,6 +31,8 @@ model Post {
   title     String
   summary   String
   content   String
+  nameImage String?
+  pathImage String?
   status    Int       @default(1)
   owner     User      @relation(fields: [ownerId], references: [id])
   ownerId   Int
