@@ -4,3 +4,9 @@ export class StatusDto {
   name: string;
   description: string;
 }
+
+export class ReactionDto {
+  @IsNotEmpty()
+  name: string;
+  description: string;
+}

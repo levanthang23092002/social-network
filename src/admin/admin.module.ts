@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
 import { AdminController } from './admin.controller';
-import { AdminApproveService, AdminService } from './admin.service';
+import { StatusService } from './status.service';
 import { PrismaService } from 'src/prisma.service';
 import { JwtModule } from '@nestjs/jwt';
+import { ApproveService } from './appoves.service';
+import { ReactionService } from './Reaction.service';
 @Module({
   imports: [
     JwtModule.register({
@@ -10,6 +12,6 @@ import { JwtModule } from '@nestjs/jwt';
     }),
   ],
   controllers: [AdminController],
-  providers: [AdminService, PrismaService, AdminApproveService],
+  providers: [StatusService, PrismaService, ApproveService, ReactionService],
 })
 export class AdminModule {}
