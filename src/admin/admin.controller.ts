@@ -9,7 +9,7 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
-import { AdminService } from './admin.service';
+import { AdminApproveService, AdminService } from './admin.service';
 import { StatusDto } from './dto/status.dto';
 import { StatusPost } from '@prisma/client';
 import { Roles } from '../decorator/role.decorator';
@@ -18,7 +18,10 @@ import { Role } from '../middleware/Role.middleware';
 @Controller('admin')
 @UseGuards(Role)
 export class AdminController {
-  constructor(private adminservice: AdminService) {}
+  constructor(
+    private adminservice: AdminService,
+    private approveService: AdminApproveService,
+  ) {}
 
   @Post('status/add')
   @Roles('ADMIN')
@@ -51,5 +54,19 @@ export class AdminController {
   @Roles('ADMIN')
   async deleteStatusbyid(@Param('id', ParseIntPipe) id: number): Promise<any> {
     return this.adminservice.deleteStatusbyid(id);
+  }
+
+  @Put('approve/agree')
+  @Roles('ADMIN')
+  async approve(@Body() body): Promise<any> {
+    const { id } = body;
+    return this.approveService.ApprovePost(id);
+  }
+
+  @Delete('approve/cancel/:id')
+  @Roles('ADMIN')
+  async cancel(@Body() body): Promise<any> {
+    const { id } = body;
+    return this.approveService.delteteposst(id);
   }
 }

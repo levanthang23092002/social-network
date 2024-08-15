@@ -132,7 +132,7 @@ export class PostService {
         where: {
           ownerId: idUser,
           OR: [{ statusId: 1 }, { statusId: 2 }],
-          approves: 1,
+          approves: true,
         },
       });
       if (!post) {

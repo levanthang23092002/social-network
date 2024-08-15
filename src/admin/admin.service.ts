@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { StatusDto } from './dto/status.dto';
 import { Post, StatusPost } from '@prisma/client';
+import { promises } from 'dns';
 
 @Injectable()
 export class AdminService {
@@ -85,10 +86,25 @@ export class AdminApproveService {
         id: id,
       },
       data: {
-        approves: 1,
+        approves: true,
       },
     });
 
+    if (!approves) {
+      throw new HttpException(
+        { message: `Không duyệt Được ${id} Status này` },
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
+    return approves;
+  };
+  delteteposst = async (id: number): Promise<Post> => {
+    const approves = await this.prismaservice.post.delete({
+      where: {
+        id: id,
+        approves: false,
+      },
+    });
     if (!approves) {
       throw new HttpException(
         { message: `Không Xóa Được ${id} Status này` },
