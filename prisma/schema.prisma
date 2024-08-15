@@ -19,7 +19,7 @@ model User {
   password  String?
   name      String?
   phone     String?
-  status    Int         @default(1)
+  status    Boolean     @default(true)
   type      String      @default("USER")
   posts     Post[]
   createdAt DateTime    @default(now())
