@@ -2,7 +2,6 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { StatusDto } from './dto/status.dto';
 import { Post, StatusPost } from '@prisma/client';
-import { promises } from 'dns';
 
 @Injectable()
 export class AdminService {
@@ -78,6 +77,7 @@ export class AdminService {
   };
 }
 
+@Injectable()
 export class AdminApproveService {
   constructor(private prismaservice: PrismaService) {}
   ApprovePost = async (id: number): Promise<Post> => {

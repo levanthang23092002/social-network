@@ -9,6 +9,7 @@ export class UserService {
   constructor(private prismaservice: PrismaService) {}
 
   update = async (iduser: number, userdata: UserDto): Promise<User> => {
+    const hashedNewPassword = await bcrypt.hash(userdata.password, 10);
     const user = await this.prismaservice.user.update({
       where: {
         id: iduser,
@@ -17,8 +18,7 @@ export class UserService {
         name: userdata.name,
         phone: userdata.phone,
         email: userdata.email,
-        password: userdata.password,
-        status: userdata.status,
+        password: hashedNewPassword,
       },
     });
     if (!user) {

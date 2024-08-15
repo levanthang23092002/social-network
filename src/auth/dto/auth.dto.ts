@@ -8,7 +8,6 @@ export class RegisterDto {
   email: string;
   @MinLength(6)
   password: string;
-  status: number;
 }
 export class LoginDto {
   @IsEmail()

@@ -7,7 +7,6 @@ import {
 import { PrismaService } from '../prisma.service';
 import { PostDto } from './dto/post.dto';
 import { Post } from '@prisma/client';
-import { ParseIntPipe } from '@nestjs/common';
 
 @Injectable()
 export class PostService {

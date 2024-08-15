@@ -33,11 +33,12 @@ export class AuthService {
     const user = await this.prismaservice.user.findUnique({
       where: {
         email: data.email,
+        status: true,
       },
     });
     if (!user) {
       throw new HttpException(
-        { message: 'Account is not exist' },
+        { message: 'Account is not exist Or Block' },
         HttpStatus.UNAUTHORIZED,
       );
     }

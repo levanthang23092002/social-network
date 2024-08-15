@@ -9,7 +9,6 @@ export class UserDto {
   @IsNotEmpty()
   @MinLength(6)
   password: string;
-  status: number;
 }
 
 export class ChangePasswordDto {
