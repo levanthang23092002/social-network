@@ -85,7 +85,7 @@ export class AdminApproveService {
         id: id,
       },
       data: {
-        approve: 1,
+        approves: 1,
       },
     });
 

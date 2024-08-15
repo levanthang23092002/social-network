@@ -58,7 +58,6 @@ export class PostController {
     } else {
       imges = { nameImage: file.originalname, pathImage: file.path };
     }
-
     return this.postservice.updatePost(iduser, id, body, imges);
   }
 

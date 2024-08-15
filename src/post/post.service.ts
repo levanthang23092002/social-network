@@ -1,7 +1,13 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { PostDto } from './dto/post.dto';
 import { Post } from '@prisma/client';
+import { ParseIntPipe } from '@nestjs/common';
 
 @Injectable()
 export class PostService {
@@ -32,7 +38,7 @@ export class PostService {
           ownerId: iduser,
           nameImage: image.nameImage,
           pathImage: image.pathImage,
-          statuspostid: data.statuspost,
+          statusId: 1,
         },
       });
       if (!post) {
@@ -122,27 +128,28 @@ export class PostService {
 
   viewAllPostbyUser = async (idUser: number): Promise<any> => {
     try {
-      const user = await this.prismaservice.user.findUnique({
-        where: {
-          id: idUser,
-          status: 0,
-        },
-      });
-      if (!user) {
-        throw new HttpException(
-          { message: 'Tài Khoản Không Tồn Tại' },
-          HttpStatus.BAD_REQUEST,
-        );
-      }
       const post = await this.prismaservice.post.findMany({
         where: {
           ownerId: idUser,
-        },
-        orderBy: {
-          updatedAt: 'desc',
+          OR: [{ statusId: 1 }, { statusId: 2 }],
+          approves: 1,
         },
       });
+      if (!post) {
+        throw new HttpException(
+          { message: 'Lỗi truy vấn' },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+      if (post.length == 0) {
+        throw new HttpException(
+          { message: 'Không Tìm thấy bài viết nào' },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
       return post;
-    } catch (error) {}
+    } catch (error) {
+      throw new NotFoundException(error);
+    }
   };
 }

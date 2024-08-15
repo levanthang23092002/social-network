@@ -6,5 +6,5 @@ export class PostDto {
   summary: string;
   content: string;
   @IsNotEmpty()
-  statuspost: number;
+  statusId: number;
 }
