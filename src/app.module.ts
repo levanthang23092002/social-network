@@ -6,9 +6,10 @@ import { UserModule } from './user/user.module';
 import { APP_PIPE } from '@nestjs/core';
 import { PostModule } from './post/post.module';
 import { AdminModule } from './admin/admin.module';
+import { ViewModule } from './view/view.module';
 
 @Module({
-  imports: [AuthModule, UserModule, PostModule, AdminModule],
+  imports: [AuthModule, UserModule, PostModule, AdminModule, ViewModule],
   controllers: [AppController],
   providers: [
     AppService,
