@@ -7,16 +7,21 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { StatusService } from './status.service';
-import { StatusDto } from './dto/status.dto';
-import { StatusPost } from '@prisma/client';
+import { RegisterAdminDto, StatusDto } from './dto/status.dto';
+import { StatusPost, User } from '@prisma/client';
 import { Roles } from '../decorator/role.decorator';
 import { Role } from '../middleware/Role.middleware';
 import { ApproveService } from './appoves.service';
 import { ReactionService } from './Reaction.service';
+import { AccountService } from './m_account.service';
 
+interface AuthenticatedRequest extends Request {
+  user?: any;
+}
 @Controller('admin')
 @UseGuards(Role)
 export class AdminController {
@@ -24,6 +29,7 @@ export class AdminController {
     private statusservice: StatusService,
     private approveService: ApproveService,
     private reactionservice: ReactionService,
+    private accountservice: AccountService,
   ) {}
 
   // funtion for status post
@@ -120,6 +126,53 @@ export class AdminController {
   async deleteReactionbyid(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<any> {
-    return this.reactionservice.deleteReactionbyid(id);
+    return await this.reactionservice.deleteReactionbyid(id);
+  }
+
+  // funtion managerment  Account
+
+  @Put('lock/:id')
+  async lockaccount(@Param('id', ParseIntPipe) id: number): Promise<User> {
+    return await this.accountservice.lockaccount(id);
+  }
+
+  @Put('unlock/:id')
+  @Roles('ADMIN')
+  async unlockaccount(@Param('id', ParseIntPipe) id: number): Promise<User> {
+    return await this.accountservice.unlockaccount(id);
+  }
+  @Get('viewall/lock')
+  @Roles('ADMIN')
+  async viewalllockaccount(): Promise<any> {
+    return await this.accountservice.viewAllAccountLock();
+  }
+
+  @Get('viewall/lock/:id')
+  @Roles('ADMIN')
+  async viewdetailaccountLock(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<any> {
+    return await this.accountservice.viewdetailAccountLock(id);
+  }
+
+  @Post('register')
+  @Roles('ADMIN')
+  async registerAdmin(@Body() body: RegisterAdminDto): Promise<User> {
+    return await this.accountservice.register(body);
+  }
+
+  @Put('update/user-to-admin/:id')
+  @Roles('ADMIN')
+  async updateUsertoAdmin(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<User> {
+    return await this.accountservice.updateUsertoAdmin(id);
+  }
+
+  @Put('update/admin-to-user')
+  @Roles('ADMIN')
+  async updateAdmintoUser(@Req() req: AuthenticatedRequest): Promise<User> {
+    const id = req.user.id;
+    return await this.accountservice.updateAdmintoUser(id);
   }
 }

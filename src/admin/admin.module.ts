@@ -5,6 +5,7 @@ import { PrismaService } from 'src/prisma.service';
 import { JwtModule } from '@nestjs/jwt';
 import { ApproveService } from './appoves.service';
 import { ReactionService } from './Reaction.service';
+import { AccountService } from './m_account.service';
 @Module({
   imports: [
     JwtModule.register({
@@ -12,6 +13,12 @@ import { ReactionService } from './Reaction.service';
     }),
   ],
   controllers: [AdminController],
-  providers: [StatusService, PrismaService, ApproveService, ReactionService],
+  providers: [
+    StatusService,
+    PrismaService,
+    ApproveService,
+    ReactionService,
+    AccountService,
+  ],
 })
 export class AdminModule {}
