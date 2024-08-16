@@ -4,7 +4,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { PrismaService } from '../prisma.service';
+import { PrismaService } from '../../prisma.service';
 import { User } from '@prisma/client';
 import { RegisterAdminDto } from './dto/status.dto';
 import { hash } from 'bcrypt';

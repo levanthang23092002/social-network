@@ -13,8 +13,8 @@ import {
 import { StatusService } from './status.service';
 import { RegisterAdminDto, StatusDto } from './dto/status.dto';
 import { StatusPost, User } from '@prisma/client';
-import { Roles } from '../decorator/role.decorator';
-import { Role } from '../middleware/Role.middleware';
+import { Roles } from '../../decorator/role.decorator';
+import { Role } from '../../middleware/Role.middleware';
 import { ApproveService } from './appoves.service';
 import { ReactionService } from './Reaction.service';
 import { AccountService } from './m_account.service';

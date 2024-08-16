@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserService } from './user.service';
-import { PrismaService } from '../prisma.service';
+import { PrismaService } from '../../../prisma.service';
 import { HttpException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { ChangePasswordDto, UserDto } from './dto/user.dto';

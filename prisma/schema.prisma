@@ -56,26 +56,30 @@ model StatusPost {
 }
 
 model Comment {
-  id        Int       @id @default(autoincrement())
-  postid    Post      @relation(fields: [postId], references: [id])
   postId    Int
-  owner     User      @relation(fields: [ownerId], references: [id])
   ownerId   Int
   content   String
   createdAt DateTime  @default(now())
   updatedAt DateTime? @updatedAt
+
+  owner  User @relation(fields: [ownerId], references: [id])
+  postid Post @relation(fields: [postId], references: [id])
+
+  @@id([postId, ownerId])
 }
 
 model Reactions {
-  id            Int           @id @default(autoincrement())
-  postid        Post          @relation(fields: [postId], references: [id])
-  postId        Int
+  postId       Int
+  ownerId      Int
+  reactionType Int
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime? @updatedAt
+
   owner         User          @relation(fields: [ownerId], references: [id])
-  ownerId       Int
+  postid        Post          @relation(fields: [postId], references: [id])
   reactiontypes ReactionTypes @relation(fields: [reactionType], references: [id])
-  reactionType  Int
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime?     @updatedAt
+
+  @@id([postId, ownerId])
 }
 
 model ReactionTypes {
