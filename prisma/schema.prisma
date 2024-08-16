@@ -56,16 +56,15 @@ model StatusPost {
 }
 
 model Comment {
+  id        Int       @id @default(autoincrement())
   postId    Int
   ownerId   Int
   content   String
   createdAt DateTime  @default(now())
   updatedAt DateTime? @updatedAt
 
-  owner  User @relation(fields: [ownerId], references: [id])
-  postid Post @relation(fields: [postId], references: [id])
-
-  @@id([postId, ownerId])
+  owner  User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  postid Post @relation(fields: [postId], references: [id], onDelete: Cascade)
 }
 
 model Reactions {
@@ -75,8 +74,8 @@ model Reactions {
   createdAt    DateTime  @default(now())
   updatedAt    DateTime? @updatedAt
 
-  owner         User          @relation(fields: [ownerId], references: [id])
-  postid        Post          @relation(fields: [postId], references: [id])
+  owner         User          @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  postid        Post          @relation(fields: [postId], references: [id], onDelete: Cascade)
   reactiontypes ReactionTypes @relation(fields: [reactionType], references: [id])
 
   @@id([postId, ownerId])

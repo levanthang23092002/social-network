@@ -5,3 +5,6 @@ export class ReactionPostDto {
   @IsNotEmpty()
   reactintype: number;
 }
+export interface IdReaction {
+  typeReaction?: number;
+}

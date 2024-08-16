@@ -23,3 +23,6 @@ export interface UserPaginationResType {
   page: number;
   itemperpage: number;
 }
+export interface IdTypeReaction {
+  typeReaction?: number;
+}

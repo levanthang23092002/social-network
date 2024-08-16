@@ -1,7 +1,12 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Reactions } from '@prisma/client';
 import { PrismaService } from 'src/prisma.service';
-import { ReactionPostDto } from './dto/reaction.dto';
+import { IdReaction, ReactionPostDto } from './dto/reaction.dto';
 
 @Injectable()
 export class ReactionService {
@@ -11,54 +16,57 @@ export class ReactionService {
     id: number,
     data: ReactionPostDto,
   ): Promise<Reactions> => {
-    const check = await this.prismaservice.reactions.findUnique({
-      where: {
-        postId_ownerId: { postId: data.PostId, ownerId: id },
-      },
-    });
-    if (check) {
-      throw new HttpException(
-        { message: 'Bạn đã chọn nó' },
-        HttpStatus.BAD_REQUEST,
-      );
-    }
+    try {
+      const check = await this.prismaservice.reactions.findUnique({
+        where: {
+          postId_ownerId: { postId: data.PostId, ownerId: id },
+        },
+      });
+      if (check) {
+        throw new HttpException(
+          { message: 'Bạn đã chọn nó' },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
 
-    const reaction = await this.prismaservice.reactions.create({
-      data: {
-        postId: data.PostId,
-        ownerId: id,
-        reactionType: data.reactintype,
-      },
-    });
-    if (!reaction) {
-      throw new HttpException(
-        { message: 'Lỗi truy vấn' },
-        HttpStatus.BAD_REQUEST,
-      );
+      const reaction = await this.prismaservice.reactions.create({
+        data: {
+          postId: data.PostId,
+          ownerId: id,
+          reactionType: data.reactintype,
+        },
+      });
+      if (!reaction) {
+        throw new HttpException(
+          { message: 'Lỗi truy vấn' },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+      return reaction;
+    } catch (error) {
+      throw new NotFoundException(error);
     }
-    return reaction;
   };
   updateReaction = async (id: number, data: ReactionPostDto): Promise<any> => {
-    const reaction = await this.prismaservice.reactions.upsert({
-      where: {
-        postId_ownerId: { postId: data.PostId, ownerId: id },
-      },
-      update: {
-        reactionType: data.reactintype,
-      },
-      create: {
-        postId: data.PostId,
-        ownerId: id,
-        reactionType: data.reactintype,
-      },
-    });
-    if (!reaction) {
-      throw new HttpException(
-        { message: 'Lỗi truy vấn' },
-        HttpStatus.BAD_REQUEST,
-      );
+    try {
+      const reaction = await this.prismaservice.reactions.update({
+        where: {
+          postId_ownerId: { postId: data.PostId, ownerId: id },
+        },
+        data: {
+          reactionType: data.reactintype,
+        },
+      });
+      if (!reaction) {
+        throw new HttpException(
+          { message: 'Lỗi truy vấn' },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+      return reaction;
+    } catch (error) {
+      throw new NotFoundException(error);
     }
-    return reaction;
   };
   deletereaction = async (
     iduser: number,
@@ -99,6 +107,7 @@ export class ReactionService {
           select: {
             title: true,
             summary: true,
+            ownerId: true,
             content: true,
             createdAt: true,
           },
@@ -119,8 +128,57 @@ export class ReactionService {
     }
 
     return reactedPosts.map((reaction) => ({
-      post: reaction.postid,
-      reactionType: reaction.reactiontypes,
+      title: reaction.postid.title,
+      summary: reaction.postid.summary,
+      ownerId: reaction.postid.ownerId,
+      content: reaction.postid.content,
+      name: reaction.reactiontypes.name,
+      createdAt: reaction.postid.createdAt,
+    }));
+  }
+
+  async fillterReactedPostsByUser(
+    userId: number,
+    idreaction: IdReaction,
+  ): Promise<any[]> {
+    const typeRe = idreaction.typeReaction || null;
+    const reactedPosts = await this.prismaservice.reactions.findMany({
+      where: {
+        ownerId: userId,
+        reactionType: Number(typeRe),
+      },
+      select: {
+        postid: {
+          select: {
+            title: true,
+            summary: true,
+            ownerId: true,
+            content: true,
+            createdAt: true,
+          },
+        },
+        reactiontypes: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    });
+
+    if (!reactedPosts || reactedPosts.length === 0) {
+      throw new HttpException(
+        { message: 'Người dùng này chưa phản hồi bài viết nào.' },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    return reactedPosts.map((reaction) => ({
+      title: reaction.postid.title,
+      summary: reaction.postid.summary,
+      ownerId: reaction.postid.ownerId,
+      content: reaction.postid.content,
+      name: reaction.reactiontypes.name,
+      createdAt: reaction.postid.createdAt,
     }));
   }
 }

@@ -1,6 +1,7 @@
 import { Controller, Get, Param, ParseIntPipe, Query } from '@nestjs/common';
 import { ViewService } from './view.service';
 import {
+  IdTypeReaction,
   PostPaginationResType,
   PostSearchType,
   UserPaginationResType,
@@ -23,5 +24,13 @@ export class ViewController {
   @Get('user')
   searchUser(@Query() body: UserSearchType): Promise<UserPaginationResType> {
     return this.viewservice.searchUser(body);
+  }
+
+  @Get('user-reaction-post/:id')
+  async(
+    @Query() body: IdTypeReaction,
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<any> {
+    return this.viewservice.fillterReactedPostsByUser(body, id);
   }
 }

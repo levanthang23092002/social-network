@@ -2,15 +2,17 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Param,
   ParseIntPipe,
   Post,
   Put,
+  Query,
   Req,
 } from '@nestjs/common';
 import { ReactionService } from './reaction.service';
 import { Reactions } from '@prisma/client';
-import { ReactionPostDto } from './dto/reaction.dto';
+import { IdReaction, ReactionPostDto } from './dto/reaction.dto';
 
 interface AuthenticatedRequest extends Request {
   user?: any;
@@ -46,5 +48,20 @@ export class ReactionController {
     return await this.reactionservice.deletereaction(iduser, id);
   }
 
-  
+  @Get('view-all-post-reaction')
+  async getReactedPostsByUser(
+    @Req() req: AuthenticatedRequest,
+  ): Promise<any[]> {
+    const iduser = req.user?.id;
+    return await this.reactionservice.getReactedPostsByUser(iduser);
+  }
+
+  @Get('filer-reaction')
+  async fillterReactedPostsByUser(
+    @Query() body: IdReaction,
+    @Req() req: AuthenticatedRequest,
+  ): Promise<any[]> {
+    const iduser = req.user?.id;
+    return await this.reactionservice.fillterReactedPostsByUser(iduser, body);
+  }
 }

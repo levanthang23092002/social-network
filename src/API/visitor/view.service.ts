@@ -1,6 +1,12 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
-import { PostPaginationResType, PostSearchType, UserPaginationResType, UserSearchType } from './dto/view.dto';
+import {
+  IdTypeReaction,
+  PostPaginationResType,
+  PostSearchType,
+  UserPaginationResType,
+  UserSearchType,
+} from './dto/view.dto';
 import { Post } from '@prisma/client';
 
 @Injectable()
@@ -90,5 +96,52 @@ export class ViewService {
       page: page,
       itemperpage: per_page,
     };
+  };
+
+  filtertypereacion = async (): Promise<any> => {
+    return '1';
+  };
+
+  fillterReactedPostsByUser = async (
+    idreaction: IdTypeReaction,
+    idpost: number,
+  ): Promise<any[]> => {
+    const whereClause: any = {
+      postId: idpost,
+    };
+
+    // Nếu người dùng cung cấp idreaction.typeReaction, thêm điều kiện reactionType vào whereClause
+    if (idreaction.typeReaction) {
+      whereClause.reactionType = Number(idreaction.typeReaction);
+    }
+    const reactedPosts = await this.prismaservice.reactions.findMany({
+      where: whereClause,
+      select: {
+        owner: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        reactiontypes: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    });
+
+    if (!reactedPosts || reactedPosts.length === 0) {
+      throw new HttpException(
+        { message: 'Chưa có Người dùng nào có phản ứng này với bài viết này.' },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    return reactedPosts.map((reaction) => ({
+      name: reaction.owner.name,
+      id: reaction.owner.id,
+      type: reaction.reactiontypes.name,
+    }));
   };
 }
