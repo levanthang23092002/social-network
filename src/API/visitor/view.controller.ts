@@ -27,10 +27,15 @@ export class ViewController {
   }
 
   @Get('user-reaction-post/:id')
-  async(
+  async fillterReactedPostsByUser(
     @Query() body: IdTypeReaction,
     @Param('id', ParseIntPipe) id: number,
   ): Promise<any> {
     return this.viewservice.fillterReactedPostsByUser(body, id);
+  }
+
+  @Get('all-comment/:id')
+  async viewallcomment(@Param('id', ParseIntPipe) id: number): Promise<any> {
+    return this.viewservice.viewallcomment(id);
   }
 }

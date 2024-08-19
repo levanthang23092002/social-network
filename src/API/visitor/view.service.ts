@@ -7,7 +7,7 @@ import {
   UserPaginationResType,
   UserSearchType,
 } from './dto/view.dto';
-import { Post } from '@prisma/client';
+import { Post, Comment } from '@prisma/client';
 
 @Injectable()
 export class ViewService {
@@ -139,9 +139,37 @@ export class ViewService {
     }
 
     return reactedPosts.map((reaction) => ({
-      name: reaction.owner.name,
       id: reaction.owner.id,
+      name: reaction.owner.name,
       type: reaction.reactiontypes.name,
+    }));
+  };
+
+  viewallcomment = async (idpost: number): Promise<any[]> => {
+    const comment = await this.prismaservice.comment.findMany({
+      where: { postId: idpost },
+      select: {
+        owner: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        content: true,
+      },
+    });
+
+    if (!comment || comment.length === 0) {
+      throw new HttpException(
+        { message: 'Chưa có Người dùng nào comment này với bài viết này.' },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    return comment.map((comment) => ({
+      id: comment.owner.id,
+      name: comment.owner.name,
+      content: comment.content,
     }));
   };
 }
